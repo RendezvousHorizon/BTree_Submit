@@ -734,21 +734,6 @@ namespace sjtu {
          iterator end()
          {
              return iterator();
-             tree_node cur;
-             leaf_node lnode;
-
-             _read(buff(cur),root_pos);
-             if(!cur.n)
-             {
-                 _read(buff(lnode),leaf_head_pos);
-                 return iterator(1,lnode.n);
-             }
-             while(!cur.to_leaf)
-             {
-                 _read(buff(cur),cur.c[cur.n-1]);
-             }
-             _read(buff(lnode),cur.c[cur.n-1]);
-             return iterator(cur.c[cur.n-1],lnode.n);
          }
          const_iterator cend() const
          {
