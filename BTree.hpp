@@ -371,114 +371,131 @@ namespace sjtu {
 //         }
 
     public:
+ class const_iterator;
 
-//         class const_iterator;
-//         class iterator {
-//         private:
-//             off_n self;
-//             int cur;
-//             // Your private members go here
-//         public:
-//             iterator(off_n selff=0,int idx=0):self(selff),cur(idx){};
-//             bool modify(const Key& key){
+        class iterator {
 
-//             }
-//             iterator() {
-//                 // TODO Default Constructor
-//             }
-//             iterator(const iterator& other) {
-//                 // TODO Copy Constructor
-//             }
-//             // Return a new iterator which points to the n-next elements
-//             iterator operator++(int) {
-//                 // Todo iterator++
-//             }
-//             iterator& operator++() {
-//                 // Todo ++iterator
-//             }
-//             iterator operator--(int) {
-//                 // Todo iterator--
-//             }
-//             iterator& operator--() {
-//                 // Todo --iterator
-//             }
-//             // Overloaded of operator '==' and '!='
-//             // Check whether the iterators are same
-//             value_type& operator*() const {
-//                 // Todo operator*, return the <K,V> of iterator
-//             }
-//             bool operator==(const iterator& rhs) const {
-//                 // Todo operator ==
-//             }
-//             bool operator==(const const_iterator& rhs) const {
-//                 // Todo operator ==
-//             }
-//             bool operator!=(const iterator& rhs) const {
-//                 // Todo operator !=
-//             }
-//             bool operator!=(const const_iterator& rhs) const {
-//                 // Todo operator !=
-//             }
-//             value_type* operator->() const noexcept {
-//                 /**
-//                  * for the support of it->first.
-//                  * See
-//                  * <http://kelvinh.github.io/blog/2013/11/20/overloading-of-member-access-operator-dash-greater-than-symbol-in-cpp/>
-//                  * for help.
-//                  */
-//             }
-//         };
-//         class const_iterator {
-//         private:
-//             off_n self;
-//             int cur;
-//         public:
-//             const_iterator(off_n selff=0,int curr=0):self(selff),cur(curr) {}
-//             const_iterator(const const_iterator& other) {
-//                 self=other.self;
-//                 cur=other.cur;
-//             }
-//             const_iterator(const iterator& other)
-//             {
-//                 self=other.self;
-//                 cur=other.cur;
-//             }
-//             // And other methods in iterator, please fill by yourself.
-//         };
-//         // Default Constructor and Copy Constructor
+        private:
 
+            // Your private members go here
 
-        BTree()
-        {
-            io.open("BPlusTree_test_file.txt",std::ios::in|std::ios::out|std::ios::binary);
-            if(!io)
-            {
-                io.open("BPlusTree_test_file.txt",std::ios::out);
-                io.close();
-                io.open("BPlusTree_test_file.txt",std::ios::in|std::ios::out|std::ios::binary);
-                leaf_node tem_leaf;
-                tree_node tem_tree;
+        public:
 
-                _write(buff(tem_tree),root_pos);
-                _write(buff(tem_leaf),leaf_head_pos);
+            bool modify(const Value& value){
+
+                
 
             }
-            else
-            {
-                _read(buff(core),core_pos);
-            }
-        }
 
-        ~BTree() {
-            _write(buff(core),core_pos);
-            io.close();
-        }
+            iterator() {
+
+                // TODO Default Constructor
+
+            }
+
+            iterator(const iterator& other) {
+
+                // TODO Copy Constructor
+
+            }
+
+            // Return a new iterator which points to the n-next elements
+
+            iterator operator++(int) {
+
+                // Todo iterator++
+
+            }
+
+            iterator& operator++() {
+
+                // Todo ++iterator
+
+            }
+
+            iterator operator--(int) {
+
+                // Todo iterator--
+
+            }
+
+            iterator& operator--() {
+
+                // Todo --iterator
+
+            }
+
+            // Overloaded of operator '==' and '!='
+
+            // Check whether the iterators are same
+
+            bool operator==(const iterator& rhs) const {
+
+                // Todo operator ==
+
+            }
+
+            bool operator==(const const_iterator& rhs) const {
+
+                // Todo operator ==
+
+            }
+
+            bool operator!=(const iterator& rhs) const {
+
+                // Todo operator !=
+
+            }
+
+            bool operator!=(const const_iterator& rhs) const {
+
+                // Todo operator !=
+
+            }
+
+        };
+
+        class const_iterator {
+
+            // it should has similar member method as iterator.
+
+            //  and it should be able to construct from an iterator.
+
+        private:
+
+            // Your private members go here
+
+        public:
+
+            const_iterator() {
+
+                // TODO
+
+            }
+
+            const_iterator(const const_iterator& other) {
+
+                // TODO
+
+            }
+
+            const_iterator(const iterator& other) {
+
+                // TODO
+
+            }
+
+            // And other methods in iterator, please fill by yourself.
+
+        };
+
+        // Default Constructor and Copy Constructor
 
         // Insert: Insert certain Key-Value into the database
         // Return a pair, the first of the pair is the iterator point to the new
         // element, the second of the pair is Success if it is successfully inserted
 
-        void insert(const Key& key, const Value& value)
+        pair<iterator, OperationResult> insert(const Key& key, const Value& value)
         {
             tree_node root;
             leaf_node leaf_head;
@@ -490,7 +507,7 @@ namespace sjtu {
             {
                 insert_idx=insert_on_leaf(leaf_head,key,value);
                 _write(buff(leaf_head),leaf_head_pos);
-                return;
+                return pair<iterator,OperationResult>(iterator(),Success);
             }
 
             //if there's only one leaf_node and leaf_node needs to split
@@ -514,8 +531,7 @@ namespace sjtu {
                 _write(buff(leaf_head),leaf_head_pos);
                 add_new_blocks(buff(new_leaf));
 
-                insert(key,value);
-                return;
+                return insert(key,value);
             }
             //else
             tree_node cur=root;
@@ -557,7 +573,7 @@ namespace sjtu {
             insert_on_leaf(leaf_to_insert,key,value);
 
             _write(buff(leaf_to_insert),cur_pos);
-            return;
+            return pair<iterator,OperationResult>(iterator(),Success);
         }
         // Erase: Erase the Key-Value
         // Return Success if it is successfully erased
@@ -728,36 +744,36 @@ namespace sjtu {
             core.end=3;
             _write(buff(core),core_pos);
         }
-        Value at(const Key& key)
-        {
-            tree_node cur;
-            leaf_node lnode;
-            off_n idx;
-            _read(buff(cur),root_pos);
+//         Value at(const Key& key)
+//         {
+//             tree_node cur;
+//             leaf_node lnode;
+//             off_n idx;
+//             _read(buff(cur),root_pos);
 
-            if(!cur.n)
-            {
-                _read(buff(lnode),leaf_head_pos);
-                idx=_binary_search_leafnode(lnode,key);
-                if(idx==-1)
-                    return NULL;
-                return lnode.data[idx].second;
-            }
-            while(!cur.to_leaf)
-            {
-                idx=binary_search_treenode(cur,key);
-                _read(buff(cur),cur.c[idx]);
-            }
-            idx=_binary_search_treenode(buff(lnode),cur.c[idx]);
-            _read(buff(lnode),cur.c[idx]);
-            idx=_binary_search_leafnode(lnode,key);
-            if(idx==-1)
-                return NULL;
-            return lnode.data[idx].second;
+//             if(!cur.n)
+//             {
+//                 _read(buff(lnode),leaf_head_pos);
+//                 idx=_binary_search_leafnode(lnode,key);
+//                 if(idx==-1)
+//                     return NULL;
+//                 return lnode.data[idx].second;
+//             }
+//             while(!cur.to_leaf)
+//             {
+//                 idx=binary_search_treenode(cur,key);
+//                 _read(buff(cur),cur.c[idx]);
+//             }
+//             idx=_binary_search_treenode(buff(lnode),cur.c[idx]);
+//             _read(buff(lnode),cur.c[idx]);
+//             idx=_binary_search_leafnode(lnode,key);
+//             if(idx==-1)
+//                 return NULL;
+//             return lnode.data[idx].second;
 
-        }
+//         }
         
-        size_t count(const Key& key) const {}
+      //  size_t count(const Key& key) const {}
         
 //         iterator find(const Key& key)
 //         {
