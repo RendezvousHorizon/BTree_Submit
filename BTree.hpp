@@ -16,7 +16,7 @@ namespace sjtu {
 #define buff(location) reinterpret_cast<char *>(&location)
 
 
-    private:
+    public:
         int UNIT=4096;
         size_t M =(UNIT-sizeof(int)-sizeof(bool))/(sizeof(Key)+sizeof(off_n))/2;
         size_t L =(UNIT-sizeof(int)-2*sizeof(off_n))/sizeof(value_type)/2;
