@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <cstring>
 #include <cstdio>
-#include <utility>
 #include "exception.hpp"
 #include "utility.hpp"
 
@@ -13,7 +12,7 @@ namespace sjtu {
     template <class Key, class Value, class Compare = std::less<Key> >
     class BTree {
     public:
-        typedef std::pair<Key, Value> value_type;
+        typedef pair<Key, Value> value_type;
         typedef long long int off_n;
 #define buff(location) reinterpret_cast<char *>(&location)
 
@@ -44,7 +43,8 @@ namespace sjtu {
         };
 
         char path[256];
-        std::fstream io;
+        
+        ::fstream io;
 
         struct Core
         {
@@ -525,7 +525,7 @@ namespace sjtu {
         // Return a pair, the first of the pair is the iterator point to the new
         // element, the second of the pair is Success if it is successfully inserted
 
-        std::pair<iterator, OperationResult> insert(const Key& key, const Value& value)
+        pair<iterator, OperationResult> insert(const Key& key, const Value& value)
         {
             tree_node root;
             leaf_node leaf_head;
@@ -537,7 +537,7 @@ namespace sjtu {
             {
                 insert_idx=insert_on_leaf(leaf_head,key,value);
                 _write(buff(leaf_head),leaf_head_pos);
-                return std::pair<iterator,OperationResult>(iterator(UNIT,insert_idx),Success);
+                return pair<iterator,OperationResult>(iterator(UNIT,insert_idx),Success);
             }
 
             //if there's only one leaf_node and leaf_node needs to split
@@ -603,7 +603,7 @@ namespace sjtu {
             insert_on_leaf(leaf_to_insert,key,value);
 
             _write(buff(leaf_to_insert),cur_pos);
-            return std::pair<iterator,OperationResult>(iterator(cur_pos,insert_idx),Success);
+            return pair<iterator,OperationResult>(iterator(cur_pos,insert_idx),Success);
         }
         // Erase: Erase the Key-Value
         // Return Success if it is successfully erased
