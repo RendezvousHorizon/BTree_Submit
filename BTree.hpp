@@ -19,7 +19,7 @@ namespace sjtu {
 
 
     public:
-        static const int UNIT=512;
+        static const int UNIT=1024;
         static const size_t M =(UNIT-sizeof(int)-sizeof(bool))/(sizeof(Key)+sizeof(off_n))/2;
         static const size_t L =(UNIT-sizeof(int)-2*sizeof(off_n))/sizeof(value_type)/2;
         static const off_n core_pos=0;
