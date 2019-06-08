@@ -17,12 +17,12 @@ namespace sjtu {
 
 
     public:
-        int UNIT=4096;
-        size_t M =(UNIT-sizeof(int)-sizeof(bool))/(sizeof(Key)+sizeof(off_n))/2;
-        size_t L =(UNIT-sizeof(int)-2*sizeof(off_n))/sizeof(value_type)/2;
-        off_n core_pos=0;
-        off_n root_pos=1;
-        off_n leaf_head_pos=2;
+        int UNIT;
+        int M;
+        int L;
+        off_n core_pos;
+        off_n root_pos;
+        off_n leaf_head_pos;
         struct tree_node {
             int n;
             bool to_leaf;
@@ -371,124 +371,108 @@ namespace sjtu {
 //         }
 
     public:
- class const_iterator;
+class const_iterator;
+  class iterator {
+   private:
+    // Your private members go here
+   public:
+    bool modify(const Key& key){
+    
+    }
+    iterator() {
+      // TODO Default Constructor
+    }
+    iterator(const iterator& other) {
+      // TODO Copy Constructor
+    }
+    // Return a new iterator which points to the n-next elements
+    iterator operator++(int) {
+      // Todo iterator++
+    }
+    iterator& operator++() {
+      // Todo ++iterator
+    }
+    iterator operator--(int) {
+      // Todo iterator--
+    }
+    iterator& operator--() {
+      // Todo --iterator
+    }
+    // Overloaded of operator '==' and '!='
+    // Check whether the iterators are same
+    value_type& operator*() const {
+      // Todo operator*, return the <K,V> of iterator
+    }
+    bool operator==(const iterator& rhs) const {
+      // Todo operator ==
+    }
+    bool operator==(const const_iterator& rhs) const {
+      // Todo operator ==
+    }
+    bool operator!=(const iterator& rhs) const {
+      // Todo operator !=
+    }
+    bool operator!=(const const_iterator& rhs) const {
+      // Todo operator !=
+    }
+    value_type* operator->() const noexcept {
+      /**
+       * for the support of it->first.
+       * See
+       * <http://kelvinh.github.io/blog/2013/11/20/overloading-of-member-access-operator-dash-greater-than-symbol-in-cpp/>
+       * for help.
+       */
+    }
+  };
+  class const_iterator {
+    // it should has similar member method as iterator.
+    //  and it should be able to construct from an iterator.
+   private:
+    // Your private members go here
+   public:
+    const_iterator() {
+      // TODO
+    }
+    const_iterator(const const_iterator& other) {
+      // TODO
+    }
+    const_iterator(const iterator& other) {
+      // TODO
+    }
+    // And other methods in iterator, please fill by yourself.
+  };
+        BTree(const char *WritePath="BPlusTre.txt")
+        {
+            UNIT=4096;
+            M =(UNIT-sizeof(int)-sizeof(bool))/(sizeof(Key)+sizeof(off_n))/2;
+            L =(UNIT-sizeof(int)-2*sizeof(off_n))/sizeof(value_type)/2;
+            core_pos=0;
+            root_pos=1;
+            leaf_head_pos=2; 
+            
+            io.open("BPlusTree_test_file.txt",std::ios::in|std::ios::out|std::ios::binary);
+            if(!io)
+            {
+                io.open("BPlusTre.txt",std::ios::out);
+                io.close();
+                io.open("BPlusTre.txt",std::ios::in|std::ios::out|std::ios::binary);
+                leaf_node tem_leaf;
+                tree_node tem_tree;
 
-        class iterator {
-
-        private:
-
-            // Your private members go here
-
-        public:
-
-            bool modify(const Value& value){
-
-                
-
-            }
-
-            iterator() {
-
-                // TODO Default Constructor
-
-            }
-
-            iterator(const iterator& other) {
-
-                // TODO Copy Constructor
-
-            }
-
-            // Return a new iterator which points to the n-next elements
-
-            iterator operator++(int) {
-
-                // Todo iterator++
-
-            }
-
-            iterator& operator++() {
-
-                // Todo ++iterator
-
-            }
-
-            iterator operator--(int) {
-
-                // Todo iterator--
-
-            }
-
-            iterator& operator--() {
-
-                // Todo --iterator
-
-            }
-
-            // Overloaded of operator '==' and '!='
-
-            // Check whether the iterators are same
-
-            bool operator==(const iterator& rhs) const {
-
-                // Todo operator ==
-
-            }
-
-            bool operator==(const const_iterator& rhs) const {
-
-                // Todo operator ==
-
-            }
-
-            bool operator!=(const iterator& rhs) const {
-
-                // Todo operator !=
-
-            }
-
-            bool operator!=(const const_iterator& rhs) const {
-
-                // Todo operator !=
-
-            }
-
-        };
-
-        class const_iterator {
-
-            // it should has similar member method as iterator.
-
-            //  and it should be able to construct from an iterator.
-
-        private:
-
-            // Your private members go here
-
-        public:
-
-            const_iterator() {
-
-                // TODO
+                _write(buff(tem_tree),root_pos);
+                _write(buff(tem_leaf),leaf_head_pos);
 
             }
-
-            const_iterator(const const_iterator& other) {
-
-                // TODO
-
+            else
+            {
+                _read(buff(core),core_pos);
             }
-
-            const_iterator(const iterator& other) {
-
-                // TODO
-
-            }
-
-            // And other methods in iterator, please fill by yourself.
-
-        };
-
+        }
+        ~BTree() {
+          
+            _write(buff(core),core_pos);
+            io.close();
+        }
         // Default Constructor and Copy Constructor
 
         // Insert: Insert certain Key-Value into the database
