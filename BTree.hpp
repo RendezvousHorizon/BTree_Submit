@@ -719,11 +719,11 @@ namespace sjtu {
          //Return a iterator to the beginning
          iterator begin()
          {
-             return iterator(leaf_head_pos,0);
+             return iterator();
          }
          const_iterator cbegin() const
          {
-             return const_iterator(leaf_head_pos,0);
+             return const_iterator();
          }
          // Return a iterator to the end(the next element after the last)
          iterator end()
@@ -746,9 +746,8 @@ namespace sjtu {
          }
          const_iterator cend() const
          {
-             iterator itr=end();
-             const_iterator citr=itr;
-             return citr;
+
+             return const_iterator();
          }
         // Check whether this BTree is empty
         bool empty()
@@ -812,35 +811,35 @@ namespace sjtu {
          */
          iterator find(const Key& key)
          {
-             tree_node cur;
-             leaf_node lnode;
-             _read(buff(cur),root_pos);
-             int idx;
-             if(!cur.n)
-             {
-                 _read(buff(lnode),leaf_head_pos);
-                 idx=_binary_search_leafnode(lnode,key);
-                 if(idx==-1)
-                     return end();
-                 return iterator();
-             }
-             while(!cur.to_leaf)
-             {
-                 idx=binary_search_treenode(cur,key);
-                 _read(buff(cur),cur.c[idx]);
-             }
-             idx=binary_search_treenode(cur,key);
-             _read(buff(lnode),cur.c[idx]);
-
-             idx=_binary_search_leafnode(lnode,key);
-             if(idx==-1)
-                 return end();
+//             tree_node cur;
+//             leaf_node lnode;
+//             _read(buff(cur),root_pos);
+//             int idx;
+//             if(!cur.n)
+//             {
+//                 _read(buff(lnode),leaf_head_pos);
+//                 idx=_binary_search_leafnode(lnode,key);
+//                 if(idx==-1)
+//                     return end();
+//                 return iterator();
+//             }
+//             while(!cur.to_leaf)
+//             {
+//                 idx=binary_search_treenode(cur,key);
+//                 _read(buff(cur),cur.c[idx]);
+//             }
+//             idx=binary_search_treenode(cur,key);
+//             _read(buff(lnode),cur.c[idx]);
+//
+//             idx=_binary_search_leafnode(lnode,key);
+//             if(idx==-1)
+//                 return end();
              return iterator();
 
          }
          const_iterator find(const Key& key) const
          {
-             return const_iterator(find());
+             return const_iterator();
          }
          Value at(const Key& key)
          {
