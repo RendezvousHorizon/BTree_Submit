@@ -2,7 +2,6 @@
 #include <fstream>
 #include <functional>
 #include <cstddef>
-#include <cstring>
 #include <cstdio>
 #include "exception.hpp"
 #include "utility.hpp"
@@ -449,9 +448,9 @@ namespace sjtu {
 //         // Default Constructor and Copy Constructor
 
 
-        BTree(const char *WritePath="BPlusTree_test_file.txt")
+        BTree()
         {
-            strcpy(path,WritePath);
+            path="BPlusTree_test_file.txt";
             io.open(path,std::ios::in|std::ios::out|std::ios::binary);
             if(!io)
             {
