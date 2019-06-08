@@ -1,6 +1,3 @@
-#ifndef BTREE_BTREE_HPP
-#define BTREE_BTREE_HPP
-
 #include <iostream>
 #include <fstream>
 #include <functional>
@@ -908,4 +905,3 @@ namespace sjtu {
 }  // namespace sjtu
 
 
-#endif //BTREE_BTREE_H
