@@ -403,7 +403,12 @@ namespace sjtu {
 
     public:
 
-        class const_iterator;
+        class const_iterator
+        {
+        private:
+        public:
+            const_iterator(){};
+        };
         class iterator {
         private:
 
