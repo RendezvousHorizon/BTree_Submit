@@ -1,5 +1,5 @@
-#ifndef BTREE_BTREE_H
-#define BTREE_BTREE_H
+#ifndef BTREE_BTREE_HPP
+#define BTREE_BTREE_HPP
 
 #include <iostream>
 #include <fstream>
