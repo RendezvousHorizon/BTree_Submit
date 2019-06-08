@@ -1,4 +1,4 @@
-#include <iostream>
+//#include <iostream>
 #include <fstream>
 #include <functional>
 #include <cstddef>
@@ -564,134 +564,134 @@ namespace sjtu {
         // Erase: Erase the Key-Value
         // Return Success if it is successfully erased
         // Return Fail if the key doesn't exist in the database
-        OperationResult erase(const Key& key)
-        {
-            tree_node cur;
-            //cur=root
-            _read(buff(cur),root_pos);
+//         OperationResult erase(const Key& key)
+//         {
+//             tree_node cur;
+//             //cur=root
+//             _read(buff(cur),root_pos);
 
-            int idx;
-            leaf_node lnode;
-            if(!cur.n)
-            {
-                _read(buff(lnode),leaf_head_pos);
-                idx=_binary_search_leafnode(lnode,key);
-                if(idx==-1)
-                    return Fail;
-                erase_in_leaf(lnode,idx);
-                _write(buff(lnode),leaf_head_pos);
-                return Success;
-            }
-            // to process the possibility of root need to delete
-            if(cur.n==2)
-            {
-                if(cur.to_leaf)
-                {
-                    leaf_node l1,l2;
-                    _read(buff(l1),cur.c[0]);
-                    _read(buff(l2),cur.c[1]);
-                    if(l1.n==L&&l2.n==L)
-                    {
-                        int idxx = _binary_search_leafnode(l1, key);
-                        if (idxx == -1)
-                        {
-                            idx = _binary_search_leafnode(l2, key);
-                            if (idx == -1)
-                                return Fail;
-                        }
-                        //delete root
-                        cur.n = 0;
-                        for (int i = 0; i < L; i++)
-                            l1.data[i+L] = l2.data[i];
-                        l1.n = 2 * L;
-                        l1.next=0;
-                        idx = _binary_search_leafnode(l1, key);
-                        erase_in_leaf(l1, idx);
+//             int idx;
+//             leaf_node lnode;
+//             if(!cur.n)
+//             {
+//                 _read(buff(lnode),leaf_head_pos);
+//                 idx=_binary_search_leafnode(lnode,key);
+//                 if(idx==-1)
+//                     return Fail;
+//                 erase_in_leaf(lnode,idx);
+//                 _write(buff(lnode),leaf_head_pos);
+//                 return Success;
+//             }
+//             // to process the possibility of root need to delete
+//             if(cur.n==2)
+//             {
+//                 if(cur.to_leaf)
+//                 {
+//                     leaf_node l1,l2;
+//                     _read(buff(l1),cur.c[0]);
+//                     _read(buff(l2),cur.c[1]);
+//                     if(l1.n==L&&l2.n==L)
+//                     {
+//                         int idxx = _binary_search_leafnode(l1, key);
+//                         if (idxx == -1)
+//                         {
+//                             idx = _binary_search_leafnode(l2, key);
+//                             if (idx == -1)
+//                                 return Fail;
+//                         }
+//                         //delete root
+//                         cur.n = 0;
+//                         for (int i = 0; i < L; i++)
+//                             l1.data[i+L] = l2.data[i];
+//                         l1.n = 2 * L;
+//                         l1.next=0;
+//                         idx = _binary_search_leafnode(l1, key);
+//                         erase_in_leaf(l1, idx);
 
-                        _write(buff(cur), root_pos);
-                        _write(buff(l1), leaf_head_pos);
-                        return Success;
-                    }
-                }
-                else//!cur.to_leaf
-                {
-                    tree_node t1,t2;
-                    _read(buff(t1),cur.c[0]);
-                    _read(buff(t1),cur.c[1]);
-                    if(t1.n==t2.n==M)
-                    {
-                        delete_root1(cur,t1,t2);
-                        _read(buff(cur),root_pos);
-                    }
-                }
-            }
-            off_n cur_pos=root_pos;
-            tree_node son1,son2;
+//                         _write(buff(cur), root_pos);
+//                         _write(buff(l1), leaf_head_pos);
+//                         return Success;
+//                     }
+//                 }
+//                 else//!cur.to_leaf
+//                 {
+//                     tree_node t1,t2;
+//                     _read(buff(t1),cur.c[0]);
+//                     _read(buff(t1),cur.c[1]);
+//                     if(t1.n==t2.n==M)
+//                     {
+//                         delete_root1(cur,t1,t2);
+//                         _read(buff(cur),root_pos);
+//                     }
+//                 }
+//             }
+//             off_n cur_pos=root_pos;
+//             tree_node son1,son2;
 
-            while(!cur.to_leaf)
-            {
-                idx=binary_search_treenode(cur,key);
-                _read(buff(son1),cur.c[idx]);
-                if(son1.n==M)
-                {
-                    if(idx<cur.n-1)
-                    {
-                        _read(buff(son2),cur.c[idx+1]);
-                        if(son2.n>M)
-                            tree_borrow_from_right(cur,cur_pos,idx,son1,son2);
-                        else
-                            tree_merge(cur,cur_pos,idx,son1,son2);
-                    }
-                    else
-                    {
-                        _read(buff(son2),cur.c[idx-1]);
-                        if(son2.n>M)
-                            tree_borrow_from_left(cur,cur_pos,idx,son1,son2);
-                        else
-                            tree_merge(cur,cur_pos,idx-1,son2,son1);
-                    }
-                    idx=binary_search_treenode(cur,key);
-                }
+//             while(!cur.to_leaf)
+//             {
+//                 idx=binary_search_treenode(cur,key);
+//                 _read(buff(son1),cur.c[idx]);
+//                 if(son1.n==M)
+//                 {
+//                     if(idx<cur.n-1)
+//                     {
+//                         _read(buff(son2),cur.c[idx+1]);
+//                         if(son2.n>M)
+//                             tree_borrow_from_right(cur,cur_pos,idx,son1,son2);
+//                         else
+//                             tree_merge(cur,cur_pos,idx,son1,son2);
+//                     }
+//                     else
+//                     {
+//                         _read(buff(son2),cur.c[idx-1]);
+//                         if(son2.n>M)
+//                             tree_borrow_from_left(cur,cur_pos,idx,son1,son2);
+//                         else
+//                             tree_merge(cur,cur_pos,idx-1,son2,son1);
+//                     }
+//                     idx=binary_search_treenode(cur,key);
+//                 }
 
-                cur_pos=cur.c[idx];
-                cur=son1;
-            }
+//                 cur_pos=cur.c[idx];
+//                 cur=son1;
+//             }
 
-            //cur->to_leaf
-            idx=binary_search_treenode(cur,key);
-            _read(buff(lnode),cur.c[idx]);
+//             //cur->to_leaf
+//             idx=binary_search_treenode(cur,key);
+//             _read(buff(lnode),cur.c[idx]);
 
-            leaf_node lnode2;
-            //if too less data
-            if(lnode.n==L)
-            {
-                if(idx<cur.n-1)
-                {
-                    _read(buff(lnode2),cur.c[idx+1]);
-                    if(lnode2.n>L)
-                        leaf_borrow_from_right(cur,cur_pos,idx,lnode,lnode2);
-                    else
-                        leaf_merge(cur,cur_pos,idx,lnode,lnode2);
-                }
-                else
-                {
-                    _read(buff(lnode2),cur.c[idx-1]);
-                    if(lnode2.n>L)
-                        leaf_borrow_from_left(cur,cur_pos,idx,lnode,lnode2);
-                    else
-                        leaf_merge(cur,cur_pos,idx-1,lnode2,lnode);
-                }
-                idx=binary_search_treenode(cur,key);
-            }
-            //erase data
-            off_n leaf_pos=cur.c[idx];
-            idx=_binary_search_leafnode(lnode,key);
-            if(idx==-1)
-                return Fail;  // If you can't finish erase part, just remaining here.
-            erase_in_leaf(lnode,idx);
-            _write(buff(lnode),leaf_pos);
-            return Success;
-        }
+//             leaf_node lnode2;
+//             //if too less data
+//             if(lnode.n==L)
+//             {
+//                 if(idx<cur.n-1)
+//                 {
+//                     _read(buff(lnode2),cur.c[idx+1]);
+//                     if(lnode2.n>L)
+//                         leaf_borrow_from_right(cur,cur_pos,idx,lnode,lnode2);
+//                     else
+//                         leaf_merge(cur,cur_pos,idx,lnode,lnode2);
+//                 }
+//                 else
+//                 {
+//                     _read(buff(lnode2),cur.c[idx-1]);
+//                     if(lnode2.n>L)
+//                         leaf_borrow_from_left(cur,cur_pos,idx,lnode,lnode2);
+//                     else
+//                         leaf_merge(cur,cur_pos,idx-1,lnode2,lnode);
+//                 }
+//                 idx=binary_search_treenode(cur,key);
+//             }
+//             //erase data
+//             off_n leaf_pos=cur.c[idx];
+//             idx=_binary_search_leafnode(lnode,key);
+//             if(idx==-1)
+//                 return Fail;  // If you can't finish erase part, just remaining here.
+//             erase_in_leaf(lnode,idx);
+//             _write(buff(lnode),leaf_pos);
+//             return Success;
+//         }
         // Return a iterator to the beginning
         
         // Check whether this BTree is empty
@@ -700,21 +700,21 @@ namespace sjtu {
             return core.size==0;
         }
         // Return the number of <K,V> pairs
-        size_t my_size()
-        {
-            size_t totalSize=0;
-            leaf_node lnode;
+//         size_t my_size()
+//         {
+//             size_t totalSize=0;
+//             leaf_node lnode;
 
-            _read(buff(lnode),1);
-            while(true)
-            {
-                totalSize+=lnode.n;
-                if(!lnode.next)
-                    break;
-                _read(buff(lnode),lnode.next);
-            }
-            return totalSize;
-        }
+//             _read(buff(lnode),1);
+//             while(true)
+//             {
+//                 totalSize+=lnode.n;
+//                 if(!lnode.next)
+//                     break;
+//                 _read(buff(lnode),lnode.next);
+//             }
+//             return totalSize;
+//         }
         size_t size()
         {
             return core.size;
@@ -758,19 +758,9 @@ namespace sjtu {
             return lnode.data[idx].second;
 
         }
-        /**
-         * Returns the number of elements with key
-         *   that compares equivalent to the specified argument,
-         * The default method of check the equivalence is !(a < b || b > a)
-         */
+        
         size_t count(const Key& key) const {}
-        /**
-         * Finds an element with key equivalent to key.
-         * key value of the element to search for.
-         * Iterator to an element with key equivalent to key.
-         *   If no such element is found, past-the-end (see end()) iterator is
-         * returned.
-         */
+        
 //         iterator find(const Key& key)
 //         {
 //             tree_node cur;
@@ -803,29 +793,29 @@ namespace sjtu {
 //         {
 //             return const_iterator(find());
 //         }
-        void traverse()
-        {
-            std::cout<<'\n'<<"in function traverse():"<<'\n';
-            leaf_node cur;
-            int count=0;
-            _read(buff(cur),leaf_head_pos);
-            if(!cur.n)
-            {
-                std::cout<<"the tree is empty."<<'\n';
-                return;
-            }
-            while(true)
-            {
-                std::cout<<"the "<<count++<<"th leaf_node:"<<'\n';
-                for(int i=0;i<cur.n;i++)
-                    std::cout<<cur.data[i].first<<" ";
-                std::cout<<'\n';
-                if(cur.next)
-                    _read(buff(cur),cur.next);
-                else
-                    return;
-            }
-        }
+//         void traverse()
+//         {
+//             std::cout<<'\n'<<"in function traverse():"<<'\n';
+//             leaf_node cur;
+//             int count=0;
+//             _read(buff(cur),leaf_head_pos);
+//             if(!cur.n)
+//             {
+//                 std::cout<<"the tree is empty."<<'\n';
+//                 return;
+//             }
+//             while(true)
+//             {
+//                 std::cout<<"the "<<count++<<"th leaf_node:"<<'\n';
+//                 for(int i=0;i<cur.n;i++)
+//                     std::cout<<cur.data[i].first<<" ";
+//                 std::cout<<'\n';
+//                 if(cur.next)
+//                     _read(buff(cur),cur.next);
+//                 else
+//                     return;
+//             }
+//        }
     };
 }  // namespace sjtu
 
