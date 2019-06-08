@@ -44,7 +44,7 @@ namespace sjtu {
 
         char path[256];
         
-        ::fstream io;
+        std::fstream io;
 
         struct Core
         {
