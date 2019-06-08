@@ -858,7 +858,7 @@ namespace sjtu {
                  _read(buff(lnode),leaf_head_pos);
                  idx=_binary_search_leafnode(lnode,key);
                  if(idx==-1)
-                     return NULL;
+                     return Value();
                  return lnode.data[idx].second;
              }
              while(!cur.to_leaf)
@@ -866,11 +866,11 @@ namespace sjtu {
                  idx=binary_search_treenode(cur,key);
                  _read(buff(cur),cur.c[idx]);
              }
-             idx=_binary_search_treenode(buff(lnode),cur.c[idx]);
+             idx=binary_search_treenode(cur,cur.c[idx]);
              _read(buff(lnode),cur.c[idx]);
              idx=_binary_search_leafnode(lnode,key);
              if(idx==-1)
-                 return NULL;
+                 return Value();
              return lnode.data[idx].second;
 
          }
