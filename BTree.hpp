@@ -733,6 +733,7 @@ namespace sjtu {
          // Return a iterator to the end(the next element after the last)
          iterator end()
          {
+             return iterator();
              tree_node cur;
              leaf_node lnode;
 
@@ -751,7 +752,6 @@ namespace sjtu {
          }
          const_iterator cend() const
          {
-
              return const_iterator();
          }
         // Check whether this BTree is empty
@@ -781,7 +781,7 @@ namespace sjtu {
          *   that compares equivalent to the specified argument,
          * The default method of check the equivalence is !(a < b || b > a)
          */
-        size_t count(const Key& key) const
+        size_t count(const Key& key)
         {
              tree_node cur;
              leaf_node lnode;
