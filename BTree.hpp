@@ -17,12 +17,12 @@ namespace sjtu {
 
 
     private:
-        static const int UNIT=4096;
-        static const size_t M =(UNIT-sizeof(int)-sizeof(bool))/(sizeof(Key)+sizeof(off_n))/2;
-        static const size_t L =(UNIT-sizeof(int)-2*sizeof(off_n))/sizeof(value_type)/2;
-        static const off_n core_pos=0;
-        static const off_n root_pos=1;
-        static const off_n leaf_head_pos=2;
+        int UNIT=4096;
+        size_t M =(UNIT-sizeof(int)-sizeof(bool))/(sizeof(Key)+sizeof(off_n))/2;
+        size_t L =(UNIT-sizeof(int)-2*sizeof(off_n))/sizeof(value_type)/2;
+        off_n core_pos=0;
+        off_n root_pos=1;
+        off_n leaf_head_pos=2;
         struct tree_node {
             int n;
             bool to_leaf;
@@ -450,13 +450,12 @@ namespace sjtu {
 
         BTree()
         {
-            path="BPlusTree_test_file.txt";
-            io.open(path,std::ios::in|std::ios::out|std::ios::binary);
+            io.open("BPlusTree_test_file.txt",std::ios::in|std::ios::out|std::ios::binary);
             if(!io)
             {
-                io.open(path,std::fstream::out);
+                io.open("BPlusTree_test_file.txt",std::ios::out);
                 io.close();
-                io.open(path,std::ios::in|std::ios::out|std::ios::binary);
+                io.open("BPlusTree_test_file.txt",std::ios::in|std::ios::out|std::ios::binary);
                 leaf_node tem_leaf;
                 tree_node tem_tree;
 
