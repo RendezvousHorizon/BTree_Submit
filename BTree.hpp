@@ -15,11 +15,11 @@ namespace sjtu {
     public:
         typedef std::pair<Key, Value> value_type;
         typedef long long int off_n;
-#define buff(location) reinterpret_cast<char *>(&location)
+#define buff(location) (void *)(&location)
 
 
     public:
-        static const int UNIT=1024;
+        static const int UNIT=4096;
         static const size_t M =(UNIT-sizeof(int)-sizeof(bool))/(sizeof(Key)+sizeof(off_n))/2;
         static const size_t L =(UNIT-sizeof(int)-2*sizeof(off_n))/sizeof(value_type)/2;
         static const off_n core_pos=0;
@@ -45,6 +45,7 @@ namespace sjtu {
 
         char path[256];
         std::fstream io;
+        char _buffer[UNIT+1];
 
         struct Core
         {
@@ -53,20 +54,22 @@ namespace sjtu {
             Core(off_n endd=3,long long int sizee=0):end(endd),size(sizee){}
         }core;
 
-        void add_new_blocks(char *s,size_t _size=UNIT)
+        void add_new_blocks(void *s,size_t _size=UNIT)
         {
             _write(s,core.end++);
         }
-        inline void _write(char *s,off_n number_of_blocks,size_t _size=UNIT)
+        inline void _write(void *s,off_n number_of_blocks,size_t _size=UNIT)
         {
+            memcpy(_buffer,s,_size);
             io.seekp(UNIT*number_of_blocks);
-            io.write(s,_size);
+            io.write(_buffer,UNIT);
             io.flush();
         }
-        inline void _read(char *s,off_n number_of_blocks,size_t _size=UNIT)
+        inline void _read(void *s,off_n number_of_blocks,size_t _size=UNIT)
         {
             io.seekg(UNIT*number_of_blocks);
-            io.read(s,_size);
+            io.read(_buffer,UNIT);
+            memcpy(s,_buffer,_size);
             io.flush();
         }
         //for copy build
@@ -564,7 +567,7 @@ namespace sjtu {
             {
                 next_child=binary_search_treenode(cur,key);
                 io.seekg(cur.c[next_child]*UNIT);
-                io.read(buff(next_size),sizeof(int));
+                io.read(reinterpret_cast<char *>(&next_size),sizeof(int));
                 if(next_size==2*M)
                 {
                     split_tree_node(cur,cur_pos,next_child);
@@ -576,7 +579,7 @@ namespace sjtu {
             //cur.child is leaf
             next_child=binary_search_treenode(cur,key);
             io.seekg(cur.c[next_child]*UNIT);
-            io.read(buff(next_size),sizeof(int));
+            io.read(reinterpret_cast<char *>(&next_size),sizeof(int));
             if(next_size==2*L)
             {
                 split_leaf_node(cur,cur_pos,next_child);//it should not let io point to another place
@@ -760,7 +763,7 @@ namespace sjtu {
             _write(buff(leaf_head),leaf_head_pos);
             core.size=0;
             core.end=3;
-            _write(buff(core),core_pos,2*sizeof(long long int));
+            _write(buff(core),core_pos,sizeof(core));
         }
         /**
          * Returns the number of elements with key
