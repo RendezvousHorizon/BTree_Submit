@@ -791,6 +791,7 @@ namespace sjtu {
              idx=_binary_search_leafnode(lnode,key);
              if(idx==-1)
                  return 0;
+            return 1;
       }
         /**
          * Finds an element with key equivalent to key.
