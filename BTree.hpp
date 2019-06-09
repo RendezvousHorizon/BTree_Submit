@@ -19,7 +19,7 @@ namespace sjtu {
 
 
     public:
-        static const int UNIT=1024;
+        static const int UNIT=2048;
         static const size_t M =(UNIT-sizeof(int)-sizeof(bool))/(sizeof(Key)+sizeof(off_n))/2;
         static const size_t L =(UNIT-sizeof(int)-2*sizeof(off_n))/sizeof(value_type)/2;
         static const off_n core_pos=0;
@@ -482,7 +482,7 @@ namespace sjtu {
             }
             else
             {
-                _read(buff(core),core_pos);
+                _read(buff(core),core_pos，16);
             }
         }
 
@@ -501,7 +501,7 @@ namespace sjtu {
 //            file_copy(path,other.path);
 //        }
         ~BTree() {
-            _write(buff(core),core_pos);
+            _write(buff(core),core_pos，16);
             io.close();
         }
 
