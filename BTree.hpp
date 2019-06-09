@@ -482,7 +482,7 @@ namespace sjtu {
             }
             else
             {
-                _read(buff(core),core_pos，16);
+                _read(buff(core),core_pos,16);
             }
         }
 
@@ -501,7 +501,7 @@ namespace sjtu {
 //            file_copy(path,other.path);
 //        }
         ~BTree() {
-            _write(buff(core),core_pos，16);
+            _write(buff(core),core_pos,16);
             io.close();
         }
 
