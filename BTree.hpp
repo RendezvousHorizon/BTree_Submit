@@ -482,7 +482,7 @@ namespace sjtu {
             }
             else
             {
-                _read(buff(core),core_pos,2*sizeof(long long int);
+                _read(buff(core),core_pos,2*sizeof(long long int));
             }
         }
 
@@ -501,7 +501,7 @@ namespace sjtu {
 //            file_copy(path,other.path);
 //        }
         ~BTree() {
-            _write(buff(core),core_pos,2*sizeof(long long int);
+            _write(buff(core),core_pos,2*sizeof(long long int));
             io.close();
         }
 
