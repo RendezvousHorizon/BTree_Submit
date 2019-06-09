@@ -482,6 +482,7 @@ namespace sjtu {
             }
             else
             {
+                io.seekg(0);
                 _read(buff(core),core_pos,2*sizeof(long long int));
             }
         }
@@ -501,7 +502,7 @@ namespace sjtu {
 //            file_copy(path,other.path);
 //        }
         ~BTree() {
-            _write(buff(core),core_pos,2*sizeof(long long int));
+            _write(buff(core),core_pos,2*sizeof(long  long int));
             io.close();
         }
 
@@ -748,7 +749,7 @@ namespace sjtu {
 
         size_t size()
         {
-            return size_t(core.size);
+            return core.size;
         }
         // Clear the BTree
         void clear()
@@ -759,7 +760,7 @@ namespace sjtu {
             _write(buff(leaf_head),leaf_head_pos);
             core.size=0;
             core.end=3;
-            _write(buff(core),core_pos);
+            _write(buff(core),core_pos,2*sizeof(long long int));
         }
         /**
          * Returns the number of elements with key
@@ -791,7 +792,7 @@ namespace sjtu {
              idx=_binary_search_leafnode(lnode,key);
              if(idx==-1)
                  return 0;
-            return 1;
+             return 1;
       }
         /**
          * Finds an element with key equivalent to key.
@@ -844,7 +845,7 @@ namespace sjtu {
                  _read(buff(lnode),leaf_head_pos);
                  idx=_binary_search_leafnode(lnode,key);
                  if(idx==-1)
-                     return Value();
+                     throw index_out_of_bound();
                  return lnode.data[idx].second;
              }
              while(!cur.to_leaf)
@@ -856,32 +857,32 @@ namespace sjtu {
              _read(buff(lnode),cur.c[idx]);
              idx=_binary_search_leafnode(lnode,key);
              if(idx==-1)
-                 return Value();
+                 throw index_out_of_bound();
              return lnode.data[idx].second;
 
          }
-//         void traverse()
-//         {
-//             std::cout<<'\n'<<"in function traverse():"<<'\n';
-//             leaf_node cur;
-//             int count=0;
-//             _read(buff(cur),leaf_head_pos);
-//             if(!cur.n)
-//             {
-//                 std::cout<<"the tree is empty."<<'\n';
-//                 return;
-//             }
-//             while(true)
-//             {
-//                 std::cout<<"the "<<count++<<"th leaf_node:"<<'\n';
-//                 for(int i=0;i<cur.n;i++)
-//                     std::cout<<cur.data[i].first<<" ";
-//                 std::cout<<'\n';
-//                 if(cur.next)
-//                     _read(buff(cur),cur.next);
-//                 else
-//                     return;
-//             }
-//         }
+         void traverse()
+         {
+             std::cout<<'\n'<<"in function traverse():"<<'\n';
+             leaf_node cur;
+             int count=0;
+             _read(buff(cur),leaf_head_pos);
+             if(!cur.n)
+             {
+                 std::cout<<"the tree is empty."<<'\n';
+                 return;
+             }
+             while(true)
+             {
+                 std::cout<<"the "<<count++<<"th leaf_node:"<<'\n';
+                 for(int i=0;i<cur.n;i++)
+                     std::cout<<cur.data[i].first<<" ";
+                 std::cout<<'\n';
+                 if(cur.next)
+                     _read(buff(cur),cur.next);
+                 else
+                     return;
+             }
+         }
     };
 }  // namespace sjtu
