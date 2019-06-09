@@ -56,7 +56,7 @@ namespace sjtu {
 
         void add_new_blocks(void *s,size_t _size=UNIT)
         {
-            _write(s,core.end++);
+            _write(s,core.end++,_size);
         }
         inline void _write(void *s,off_n number_of_blocks,size_t _size=UNIT)
         {
@@ -109,7 +109,7 @@ namespace sjtu {
             off_n initial_pos=io.tellp();
 
             tree_node son,tem;
-            _read(buff(son),father.c[idx]);
+            _read(buff(son),father.c[idx],sizeof(son));
 
             //copy son M~2M-1 to tem
             //son.key[M-1]copy to father.key[idx]
@@ -131,9 +131,9 @@ namespace sjtu {
             father.c[idx+1]=core.end;
             add_new_blocks(buff(tem));
             //modify father to file
-            _write(buff(father),pos);
+            _write(buff(father),pos,sizeof(father));
             //modify son to file
-            _write(buff(son),father.c[idx]);
+            _write(buff(son),father.c[idx],sizeof(son));
             io.seekp(initial_pos);
         }
         inline void add_leaf_node(leaf_node &son,off_n pos,leaf_node &newnode)
@@ -149,13 +149,13 @@ namespace sjtu {
             if(son.next)
             {
                 leaf_node rson;
-                _read(buff(rson),son.next);
+                _read(buff(rson),son.next,sizeof(rson));
                 rson.pre=newnode_pos;
-                _write(buff(rson),son.next);
+                _write(buff(rson),son.next,sizeof(rson));
             }
             //modify:son->next=newnode
             son.next=newnode_pos;
-            _write(buff(son),pos);
+            _write(buff(son),pos,sizeof(son));
             add_new_blocks(buff(newnode));
 
             io.seekp(initial_pos);
@@ -165,7 +165,7 @@ namespace sjtu {
             off_n initial_pos=io.tellp();
             leaf_node son,tem;
             //read leaf son
-            _read(buff(son),father.c[idx]);
+            _read(buff(son),father.c[idx],sizeof(son));
 
             //copy son L~2L-1 to tem
             tem.n=son.n=L;
@@ -182,7 +182,7 @@ namespace sjtu {
             father.key[idx]=tem.data[0].first;
             father.c[idx+1]=core.end-1;
             //write father to file
-            _write(buff(father),pos);
+            _write(buff(father),pos,sizeof(father));
             io.seekp(initial_pos);
         }
         void split_root(tree_node &old_root)
@@ -203,7 +203,7 @@ namespace sjtu {
             add_new_blocks(buff(old_root));
             new_root.c[1]=new_root.c[0]+1;
             add_new_blocks(buff(tem));
-            _write(buff(new_root),root_pos);
+            _write(buff(new_root),root_pos,sizeof(new_root));
             io.flush();
 
         };
@@ -300,7 +300,7 @@ namespace sjtu {
              for(int i=0;i<M-1;i++)
                  son1.key[i+M]=son2.key[i];
              son1.n=2*M;
-             _write(buff(son1),root_pos);
+             _write(buff(son1),root_pos,sizeof(son1));
              //son2 is ignored,which may lead to waste.
          }
          inline void erase_in_leaf(leaf_node &lnode,const int &idx)
@@ -322,9 +322,9 @@ namespace sjtu {
              rson.n--;
              son.n++;
 
-             _write(buff(father),pos);
-             _write(buff(son),father.c[idx]);
-             _write(buff(rson),father.c[idx+1]);
+             _write(buff(father),pos,sizeof(father));
+             _write(buff(son),father.c[idx],sizeof(son));
+             _write(buff(rson),father.c[idx+1],sizeof(rson));
          }
          void tree_borrow_from_left(tree_node &father,off_n pos,int idx,tree_node &son,tree_node &lson)
          {
@@ -337,9 +337,9 @@ namespace sjtu {
              father.key[idx-1]=lson.key[lson.n-2];
              lson.n--;
              son.n++;
-             _write(buff(father),pos);
-             _write(buff(son),father.c[idx]);
-             _write(buff(lson),father.c[idx-1]);
+             _write(buff(father),pos,sizeof(father));
+             _write(buff(son),father.c[idx],sizeof(son));
+             _write(buff(lson),father.c[idx-1],sizeof(lson));
 
          }
          void leaf_borrow_from_right(tree_node &father,off_n pos,int idx,leaf_node &son,leaf_node &rson)
@@ -349,9 +349,9 @@ namespace sjtu {
                  rson.data[i]=rson.data[i+1];
              rson.n--;
              father.key[idx] = rson.data[0].first;
-             _write(buff(father),pos);
-             _write(buff(son),father.c[idx]);
-             _write(buff(rson),father.c[idx+1]);
+             _write(buff(father),pos,sizeof(father));
+             _write(buff(son),father.c[idx],sizeof(son));
+             _write(buff(rson),father.c[idx+1],sizeof(rson));
          }
          void leaf_borrow_from_left(tree_node &father,off_n pos,int idx,leaf_node &son,leaf_node &lson)
          {
@@ -360,9 +360,9 @@ namespace sjtu {
              son.data[0]=lson.data[--lson.n];
              son.n++;
              father.key[idx-1]=son.data[0].first;
-             _write(buff(father), pos);
-             _write(buff(son),father.c[idx]);
-             _write(buff(lson),father.c[idx-1]);
+             _write(buff(father), pos,sizeof(father));
+             _write(buff(son),father.c[idx],sizeof(son));
+             _write(buff(lson),father.c[idx-1],sizeof(lson));
          }
          void tree_merge(tree_node &father,off_n pos,int idx,tree_node &lson,tree_node &rson)
          {
@@ -381,8 +381,8 @@ namespace sjtu {
                  father.c[i]=father.c[i+1];
              father.n--;
              //write to file
-             _write(buff(father),pos);
-             _write(buff(lson),father.c[idx]);
+             _write(buff(father),pos),sizeof(father);
+             _write(buff(lson),father.c[idx],sizeof(lson));
              //
          }
          void leaf_merge(tree_node &father,off_n pos,int idx,leaf_node &lson,leaf_node &rson)
@@ -400,8 +400,8 @@ namespace sjtu {
                  father.c[i]=father.c[i+1];
              father.n--;
              //write to file
-             _write(buff(father),pos);
-             _write(buff(lson),father.c[idx]);
+             _write(buff(father),pos,sizeof(father));
+             _write(buff(lson),father.c[idx],sizeof(lson));
          }
 
     public:
@@ -479,14 +479,14 @@ namespace sjtu {
                 leaf_node tem_leaf;
                 tree_node tem_tree;
 
-                _write(buff(tem_tree),root_pos);
-                _write(buff(tem_leaf),leaf_head_pos);
+                _write(buff(tem_tree),root_pos,sizeof(tem_tree));
+                _write(buff(tem_leaf),leaf_head_pos,sizeof(tem_leaf));
 
             }
             else
             {
                 io.seekg(0);
-                _read(buff(core),core_pos,2*sizeof(long long int));
+                _read(buff(core),core_pos,sizeof(core));
             }
         }
 
@@ -505,7 +505,7 @@ namespace sjtu {
 //            file_copy(path,other.path);
 //        }
         ~BTree() {
-            _write(buff(core),core_pos,2*sizeof(long  long int));
+            _write(buff(core),core_pos,sizeof(core));
             io.close();
         }
 
@@ -518,14 +518,14 @@ namespace sjtu {
         {
             tree_node root;
             leaf_node leaf_head;
-            _read(buff(root),root_pos);
-            _read(buff(leaf_head),leaf_head_pos);
+            _read(buff(root),root_pos,sizeof(root));
+            _read(buff(leaf_head),leaf_head_pos,sizeof(leaf_head));
             //if there's only one leaf_node and leaf_node need not to split
             int insert_idx;
             if(!root.n&&leaf_head.n<2*L)
             {
                 insert_idx=insert_on_leaf(leaf_head,key,value);
-                _write(buff(leaf_head),leaf_head_pos);
+                _write(buff(leaf_head),leaf_head_pos,sizeof(leaf_head));
                 return std::pair<iterator,OperationResult>(iterator(),Success);
             }
 
@@ -546,9 +546,9 @@ namespace sjtu {
                 root.c[1]=leaf_head.next;
                 root.key[0]=new_leaf.data[0].first;
                 root.to_leaf=true;
-                _write(buff(root),root_pos);
-                _write(buff(leaf_head),leaf_head_pos);
-                add_new_blocks(buff(new_leaf));
+                _write(buff(root),root_pos,sizeof(root));
+                _write(buff(leaf_head),leaf_head_pos,sizeof(leaf_head));
+                add_new_blocks(buff(new_leaf),sizeof(new_leaf));
 
                 return insert(key,value);
             }
@@ -559,7 +559,7 @@ namespace sjtu {
             if(cur.n==2*M)
             {
                 split_root(cur);
-                _read(buff(cur),root_pos);
+                _read(buff(cur),root_pos,sizeof(cur));
             }
             int next_child;
             int next_size;
@@ -574,7 +574,7 @@ namespace sjtu {
                     next_child=binary_search_treenode(cur,key);
                 }
                 cur_pos=cur.c[next_child];
-                _read(buff(cur),cur.c[next_child]);
+                _read(buff(cur),cur.c[next_child],sizeof(cur));
             }
             //cur.child is leaf
             next_child=binary_search_treenode(cur,key);
@@ -587,11 +587,11 @@ namespace sjtu {
             }
             leaf_node leaf_to_insert;
             cur_pos=cur.c[next_child];
-            _read(buff(leaf_to_insert),cur.c[next_child]);
+            _read(buff(leaf_to_insert),cur.c[next_child],sizeof(leaf_to_insert));
 
             insert_on_leaf(leaf_to_insert,key,value);
 
-            _write(buff(leaf_to_insert),cur_pos);
+            _write(buff(leaf_to_insert),cur_pos,sizeof(leaf_to_insert));
             return std::pair<iterator,OperationResult>(iterator(),Success);
         }
         // Erase: Erase the Key-Value
@@ -601,18 +601,18 @@ namespace sjtu {
          {
              tree_node cur;
              //cur=root
-             _read(buff(cur),root_pos);
+             _read(buff(cur),root_pos,sizeof(cur));
 
              int idx;
              leaf_node lnode;
              if(!cur.n)
              {
-                 _read(buff(lnode),leaf_head_pos);
+                 _read(buff(lnode),leaf_head_pos,sizeof(lnode));
                  idx=_binary_search_leafnode(lnode,key);
                  if(idx==-1)
                      return Fail;
                  erase_in_leaf(lnode,idx);
-                 _write(buff(lnode),leaf_head_pos);
+                 _write(buff(lnode),leaf_head_pos,sizeof(lnode));
                  return Success;
              }
              // to process the possibility of root need to delete
@@ -621,8 +621,8 @@ namespace sjtu {
                  if(cur.to_leaf)
                  {
                      leaf_node l1,l2;
-                     _read(buff(l1),cur.c[0]);
-                     _read(buff(l2),cur.c[1]);
+                     _read(buff(l1),cur.c[0],sizeof(l1));
+                     _read(buff(l2),cur.c[1],sizeof(l2));
                      if(l1.n==L&&l2.n==L)
                      {
                          int idxx = _binary_search_leafnode(l1, key);
@@ -641,20 +641,20 @@ namespace sjtu {
                          idx = _binary_search_leafnode(l1, key);
                          erase_in_leaf(l1, idx);
 
-                         _write(buff(cur), root_pos);
-                         _write(buff(l1), leaf_head_pos);
+                         _write(buff(cur), root_pos,sizeof(cur));
+                         _write(buff(l1), leaf_head_pos,sizeof(l1));
                          return Success;
                      }
                  }
                  else//!cur.to_leaf
                  {
                      tree_node t1,t2;
-                     _read(buff(t1),cur.c[0]);
-                     _read(buff(t1),cur.c[1]);
+                     _read(buff(t1),cur.c[0],sizeof(t1));
+                     _read(buff(t1),cur.c[1],sizeof(t2));
                      if(t1.n==t2.n==M)
                      {
                          delete_root1(cur,t1,t2);
-                         _read(buff(cur),root_pos);
+                         _read(buff(cur),root_pos,sizeof(cur));
                      }
                  }
              }
@@ -664,12 +664,12 @@ namespace sjtu {
              while(!cur.to_leaf)
              {
                  idx=binary_search_treenode(cur,key);
-                 _read(buff(son1),cur.c[idx]);
+                 _read(buff(son1),cur.c[idx],sizeof(son1));
                  if(son1.n==M)
                  {
                      if(idx<cur.n-1)
                      {
-                         _read(buff(son2),cur.c[idx+1]);
+                         _read(buff(son2),cur.c[idx+1],sizeof(son2));
                          if(son2.n>M)
                              tree_borrow_from_right(cur,cur_pos,idx,son1,son2);
                          else
@@ -677,7 +677,7 @@ namespace sjtu {
                      }
                      else
                      {
-                         _read(buff(son2),cur.c[idx-1]);
+                         _read(buff(son2),cur.c[idx-1],sizeof(son2));
                          if(son2.n>M)
                              tree_borrow_from_left(cur,cur_pos,idx,son1,son2);
                          else
@@ -692,7 +692,7 @@ namespace sjtu {
 
              //cur->to_leaf
              idx=binary_search_treenode(cur,key);
-             _read(buff(lnode),cur.c[idx]);
+             _read(buff(lnode),cur.c[idx],sizeof(lnode));
 
              leaf_node lnode2;
              //if too less data
@@ -700,7 +700,7 @@ namespace sjtu {
              {
                  if(idx<cur.n-1)
                  {
-                     _read(buff(lnode2),cur.c[idx+1]);
+                     _read(buff(lnode2),cur.c[idx+1],sizeof(lnode2));
                      if(lnode2.n>L)
                          leaf_borrow_from_right(cur,cur_pos,idx,lnode,lnode2);
                      else
@@ -708,7 +708,7 @@ namespace sjtu {
                  }
                  else
                  {
-                     _read(buff(lnode2),cur.c[idx-1]);
+                     _read(buff(lnode2),cur.c[idx-1],sizeof(lnode2));
                      if(lnode2.n>L)
                          leaf_borrow_from_left(cur,cur_pos,idx,lnode,lnode2);
                      else
@@ -722,7 +722,7 @@ namespace sjtu {
              if(idx==-1)
                  return Fail;  // If you can't finish erase part, just remaining here.
              erase_in_leaf(lnode,idx);
-             _write(buff(lnode),leaf_pos);
+             _write(buff(lnode),leaf_pos,sizeof(lnode));
              return Success;
          }
          //Return a iterator to the beginning
@@ -759,8 +759,8 @@ namespace sjtu {
         {
             tree_node root;
             leaf_node leaf_head;
-            _write(buff(root),root_pos);
-            _write(buff(leaf_head),leaf_head_pos);
+            _write(buff(root),root_pos,sizeof(root));
+            _write(buff(leaf_head),leaf_head_pos,sizeof(leaf_head));
             core.size=0;
             core.end=3;
             _write(buff(core),core_pos,sizeof(core));
@@ -774,11 +774,11 @@ namespace sjtu {
         {
              tree_node cur;
              leaf_node lnode;
-             _read(buff(cur),root_pos);
+             _read(buff(cur),root_pos,sizeof(cur));
              int idx;
              if(!cur.n)
              {
-                 _read(buff(lnode),leaf_head_pos);
+                 _read(buff(lnode),leaf_head_pos,sizeof(lnode));
                  idx=_binary_search_leafnode(lnode,key);
                  if(idx==-1)
                      return 0;
@@ -787,10 +787,10 @@ namespace sjtu {
              while(!cur.to_leaf)
              {
                  idx=binary_search_treenode(cur,key);
-                 _read(buff(cur),cur.c[idx]);
+                 _read(buff(cur),cur.c[idx],sizeof(cur));
              }
              idx=binary_search_treenode(cur,key);
-             _read(buff(lnode),cur.c[idx]);
+             _read(buff(lnode),cur.c[idx],sizeof(lnode));
 
              idx=_binary_search_leafnode(lnode,key);
              if(idx==-1)
@@ -841,11 +841,11 @@ namespace sjtu {
              tree_node cur;
              leaf_node lnode;
              off_n idx;
-             _read(buff(cur),root_pos);
+             _read(buff(cur),root_pos,sizeof(cur));
 
              if(!cur.n)
              {
-                 _read(buff(lnode),leaf_head_pos);
+                 _read(buff(lnode),leaf_head_pos,sizeof(lnode));
                  idx=_binary_search_leafnode(lnode,key);
                  if(idx==-1)
                      throw index_out_of_bound();
@@ -854,10 +854,10 @@ namespace sjtu {
              while(!cur.to_leaf)
              {
                  idx=binary_search_treenode(cur,key);
-                 _read(buff(cur),cur.c[idx]);
+                 _read(buff(cur),cur.c[idx],sizeof(cur));
              }
              idx=binary_search_treenode(cur,cur.c[idx]);
-             _read(buff(lnode),cur.c[idx]);
+             _read(buff(lnode),cur.c[idx],sizeof(lnode));
              idx=_binary_search_leafnode(lnode,key);
              if(idx==-1)
                  throw index_out_of_bound();
@@ -869,7 +869,7 @@ namespace sjtu {
              std::cout<<'\n'<<"in function traverse():"<<'\n';
              leaf_node cur;
              int count=0;
-             _read(buff(cur),leaf_head_pos);
+             _read(buff(cur),leaf_head_pos,sizeof(cur));
              if(!cur.n)
              {
                  std::cout<<"the tree is empty."<<'\n';
@@ -882,7 +882,7 @@ namespace sjtu {
                      std::cout<<cur.data[i].first<<" ";
                  std::cout<<'\n';
                  if(cur.next)
-                     _read(buff(cur),cur.next);
+                     _read(buff(cur),cur.next,sizeof(cur));
                  else
                      return;
              }
